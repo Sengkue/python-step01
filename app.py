@@ -1,6 +1,10 @@
-from flask import Flask, render_template, request
+from flask import Flask, render_template, request, redirect, url_for
+import database
 
 app = Flask(__name__)
+
+# Create the database table
+database.create_table()
 
 # Route for the home page
 @app.route('/')
@@ -17,16 +21,44 @@ def about():
 def contact():
     return render_template('contact.html')
 
-# Route to handle the form submission
-@app.route('/submit', methods=['POST'])
-def submit():
-    name = request.form['name']
-    email = request.form['email']
-    message = request.form['message']
+# Route for creating a new post
+@app.route('/create', methods=['GET', 'POST'])
+def create_post():
+    if request.method == 'POST':
+        title = request.form['title']
+        content = request.form['content']
+        database.create_post(title, content)
+        return redirect(url_for('view_posts'))
+    return render_template('create_post.html')
 
-    # You can process the form data here (e.g., store in a database)
-    # For now, we will just return the user's input as a message
-    return f"Thanks for contacting us, {name}! We received your message: {message}"
+# Route to view all posts
+@app.route('/posts')
+def view_posts():
+    posts = database.get_posts()
+    return render_template('posts.html', posts=posts)
+
+# Route to view a single post
+@app.route('/post/<int:post_id>')
+def view_post(post_id):
+    post = database.get_post(post_id)
+    return render_template('post.html', post=post)
+
+# Route for updating a post
+@app.route('/update/<int:post_id>', methods=['GET', 'POST'])
+def update_post(post_id):
+    post = database.get_post(post_id)
+    if request.method == 'POST':
+        title = request.form['title']
+        content = request.form['content']
+        database.update_post(post_id, title, content)
+        return redirect(url_for('view_posts'))
+    return render_template('update_post.html', post=post)
+
+# Route for deleting a post
+@app.route('/delete/<int:post_id>', methods=['POST'])
+def delete_post(post_id):
+    database.delete_post(post_id)
+    return redirect(url_for('view_posts'))
 
 if __name__ == '__main__':
     app.run(debug=True)
