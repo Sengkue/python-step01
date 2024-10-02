@@ -1,50 +1,54 @@
-import sqlite3
+import mysql.connector
 
-DATABASE_NAME = 'powerbi.db'
+DATABASE_CONFIG = {
+    'user': 'root',       # default user for XAMPP
+    'password': '',       # leave empty if there's no password
+    'host': '127.0.0.1',  # localhost
+    'database': 'powerbi' # your database name
+}
 
 def get_db_connection():
-    conn = sqlite3.connect(DATABASE_NAME)
-    conn.row_factory = sqlite3.Row
+    conn = mysql.connector.connect(**DATABASE_CONFIG)
     return conn
-
-def create_table():
-    conn = get_db_connection()
-    conn.execute('''
-        CREATE TABLE IF NOT EXISTS posts (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            title TEXT NOT NULL,
-            content TEXT NOT NULL
-        )
-    ''')
-    conn.commit()
-    conn.close()
 
 def create_post(title, content):
     conn = get_db_connection()
-    conn.execute('INSERT INTO posts (title, content) VALUES (?, ?)', (title, content))
+    cursor = conn.cursor()
+    cursor.execute('INSERT INTO posts (title, content) VALUES (%s, %s)', (title, content))
     conn.commit()
+    cursor.close()
     conn.close()
 
 def get_posts():
     conn = get_db_connection()
-    posts = conn.execute('SELECT * FROM posts').fetchall()
+    cursor = conn.cursor(dictionary=True)
+    cursor.execute('SELECT * FROM posts')
+    posts = cursor.fetchall()
+    cursor.close()
     conn.close()
     return posts
 
 def get_post(post_id):
     conn = get_db_connection()
-    post = conn.execute('SELECT * FROM posts WHERE id = ?', (post_id,)).fetchone()
+    cursor = conn.cursor(dictionary=True)
+    cursor.execute('SELECT * FROM posts WHERE id = %s', (post_id,))
+    post = cursor.fetchone()
+    cursor.close()
     conn.close()
     return post
 
 def update_post(post_id, title, content):
     conn = get_db_connection()
-    conn.execute('UPDATE posts SET title = ?, content = ? WHERE id = ?', (title, content, post_id))
+    cursor = conn.cursor()
+    cursor.execute('UPDATE posts SET title = %s, content = %s WHERE id = %s', (title, content, post_id))
     conn.commit()
+    cursor.close()
     conn.close()
 
 def delete_post(post_id):
     conn = get_db_connection()
-    conn.execute('DELETE FROM posts WHERE id = ?', (post_id,))
+    cursor = conn.cursor()
+    cursor.execute('DELETE FROM posts WHERE id = %s', (post_id,))
     conn.commit()
+    cursor.close()
     conn.close()

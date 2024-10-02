@@ -3,9 +3,6 @@ import database
 
 app = Flask(__name__)
 
-# Create the database table
-database.create_table()
-
 # Route for the home page
 @app.route('/')
 def home():
