@@ -4,15 +4,15 @@
 
 {% block content %}
 <h2>All Posts</h2>
-<a href="/create">Create New Post</a>
+<a href="/create"><button>Create New Post</button></a>
 <ul>
     {% for post in posts %}
         <li>
             <h3><a href="/post/{{ post['id'] }}">{{ post['title'] }}</a></h3>
-            <form method="POST" action="/delete/{{ post['id'] }}">
+            <form method="POST" action="/delete/{{ post['id'] }}" style="display: inline;">
                 <button type="submit">Delete</button>
             </form>
-            <a href="/update/{{ post['id'] }}">Edit</a>
+            <a href="/update/{{ post['id'] }}"><button>Edit</button></a>
         </li>
     {% endfor %}
 </ul>
