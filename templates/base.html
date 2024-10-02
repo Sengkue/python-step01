@@ -3,29 +3,21 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{% block title %}My Flask Website{% endblock %}</title>
+    <title>{% block title %}My Blog{% endblock %}</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
 </head>
 <body>
     <header>
-        <h1>{% block header %}Welcome to My Flask Website{% endblock %}</h1>
+        <h1>My Blog</h1>
         <nav>
-            <ul>
-                <li><a href="/">Home</a></li>
-                <li><a href="/about">About</a></li>
-                <li><a href="/contact">Contact</a></li>
-            </ul>
+            <a href="/">Home</a>
+            <a href="/about">About</a>
+            <a href="/contact">Contact</a>
+            <a href="/posts">Posts</a>
         </nav>
     </header>
-
     <main>
         {% block content %}{% endblock %}
     </main>
-
-    <footer>
-        <p>© 2024 Flask Website</p>
-    </footer>
-
-    <script src="{{ url_for('static', filename='script.js') }}"></script>
 </body>
 </html>
